@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, useParams, Link } from "react-router-dom";
+import { useHistory, useParams, Link} from "react-router-dom";
 import "./AddEdit.css";
 import { toast } from "react-toastify";
+import { addContact  } from "../Redux/features/contactSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getContact } from "../Redux/features/contactSlice";
+
 
 const initialState = {
   name: "",
@@ -12,15 +16,25 @@ const initialState = {
 
 const AddEdit = () => {
   const [state, setState] = useState(initialState);
-
+  const {id} = useParams();
   const { name, email, phone, status } = state;
-
+  const dispatch =  useDispatch();
+  const history = useHistory();
+  const {contact } = useSelector((state) =>{
+    return state.contact;
+  })
+  useEffect(()=>{
+    dispatch(getContact(id))
+    setState({...contact})
+  },[id,contact])
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !email || !phone || !status) {
       toast.error("Please provide value into each input field");
     } else {
-      
+       dispatch(addContact(state)); 
+       toast.success('Contact added succesfully'); 
+       setTimeout(()=>history.push("/details"),500);
     }
   };
 
