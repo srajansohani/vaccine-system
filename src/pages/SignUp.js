@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector,useDispatch } from 'react-redux';
 import {addUsers} from '../Redux/features/userSlice';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 function Signup() {
   const [formData, setFormData] = useState({
     name: '',
@@ -17,7 +18,8 @@ function Signup() {
   const history = useHistory();
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(addUsers(formData))
+    dispatch(addUsers(formData));
+    toast.success('Successfully Signed up')
     setTimeout(()=>history.push("/"),500);
     
   };
@@ -28,6 +30,15 @@ function Signup() {
     <pre>{JSON.stringify(formData,undefined,2)}</pre>
     <form onSubmit={handleSubmit}>
       <h2>Signup Form</h2>
+      <label htmlFor="name">Employee ID:</label>
+      <input
+        type="text"
+        id="name"
+        name="employeeId"
+        value={formData.employeeId}
+        onChange={handleChange}
+        required
+      />
       <label htmlFor="name">Name:</label>
       <input
         type="text"
@@ -67,6 +78,10 @@ function Signup() {
       />
       <button type="submit">Sign up</button>
     </form>
+    <p>Aleready Have an Account</p>
+    <button onClick = {()=>{
+      setTimeout(()=>history.push('/'),500)
+    }}>Login</button>
     </>
   );
 }

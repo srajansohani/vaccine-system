@@ -7,7 +7,7 @@ export const userSlice = createSlice({
     initialState :{
             users: [
                 {
-                    employeeId: 3107,
+                    employeeId: '3107',
                     name: "John Doe",
                     email: "kenaa@example.com",
                     password: "123456",
@@ -22,7 +22,10 @@ export const userSlice = createSlice({
         },
     reducers:{
         getUsers: (state,action)=>{
-            state.user = state.users.find(user=>user.id === action.payload);
+            if(state.users.find(user=>user.employeeId === action.payload)){
+                state.user = state.users.find(user=>user.employeeId === action.payload);
+                console.log(action.payload);
+            };
         },
         addUsers: (state,action)=>{
             state.users = [...state.users,action.payload];

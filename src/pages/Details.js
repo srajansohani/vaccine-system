@@ -2,71 +2,64 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
 import { useSelector } from "react-redux";
-import { deleteContact } from "../Redux/features/contactSlice";
+import { deleteVaccineData } from "../Redux/features/vaccineSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-const contactData = [
-  
-];
+import {useState,useEffect} from 'react'
+import Row from '../components/Row';
+import Filter from '../components/Filter';
 
 const Details = () => {
-  const {contacts}= useSelector((state=>{
-    return state.contact;
+  const {vaccineData}= useSelector((state=>{
+    return state.vaccine;
   }))
   const dispatch = useDispatch();
 
-  const onDeleteContact = (id) => {
-    if (
-      window.confirm("Are you sure that you wanted to delete that contact ?")
-    ) {
-      dispatch(deleteContact(id));
-      toast.success('Successfully deleted contact  ')
-    }
-  };
-
-  const filterData = (value) => {};
+  const {filters} = useSelector((state)=>state.vaccine);
+   const [filteredData,setFilteredData] = useState(vaccineData);
+   console.log(vaccineData,filteredData)
+   useEffect(()=>{
+    setFilteredData(()=>{
+      return vaccineData.filter((item)=>{
+        return (item.name === filters.name  || filters.name === "") 
+      })
+    })
+   },[filters])
 
   return (
     <div style={{ marginTop: "150px" }}>
-      <Link to="/addContact">
-        <button className="btn btn-contact">Add Contact</button>
+      <Filter />
+      <Link to="/add">
+        <button className="btn btn-contact">Add Data</button>
       </Link>
 
       <table className="styled-table">
         <thead>
           <tr>
-            <th style={{ textAlign: "center" }}>No.</th>
+            <th style={{ textAlign: "center" }}>Employee ID</th>
             <th style={{ textAlign: "center" }}>Name</th>
-            <th style={{ textAlign: "center" }}>Email</th>
-            <th style={{ textAlign: "center" }}>Phone</th>
-            <th style={{ textAlign: "center" }}>Status</th>
+            <th style={{ textAlign: "center" }}>Vaccine</th>
+            <th style={{ textAlign: "center" }}>First Dose</th>
+            <th style={{ textAlign: "center" }}>Second Dose</th>
+            <th style={{ textAlign: "center" }}>First Dose Date</th>
+            <th style={{ textAlign: "center" }}>Second Dose Date</th>
+            <th style={{ textAlign: "center" }}>Fully Vaccinated</th>
             <th style={{ textAlign: "center" }}>Action</th>
           </tr>
         </thead>
         <tbody>
-          {contacts.map((item, index) => {
+          {filteredData.map((item, index) => {
             return (
-              <tr key={item.id}>
-                <th scope="row">{index + 1}</th>
-                <td>{item.name}</td>
-                <td>{item.email}</td>
-                <td>{item.phone}</td>
-                <td>{item.status}</td>
-                <td>
-                  <Link to={`/update/${item.id}`}>
-                    <button className="btn btn-edit">Edit</button>
-                  </Link>
-                  <button
-                    className="btn btn-delete"
-                    onClick={() => onDeleteContact(item.id)}
-                  >
-                    Delete
-                  </button>
-                  <Link to={`/view/${item.id}`}>
-                    <button className="btn btn-view">View</button>
-                  </Link>
-                </td>
-              </tr>
+              <Row 
+                EmployeeId = {item.employeeId}
+                EmployeeName = {item.name}
+                Vaccine = {item.vaccine}
+                email = {item.email}
+                FirstDoseDate = {item.firstDoseDate}
+                SecondDoseDate = {item.secondDoseDate}
+                FirstDose = {item.firstDose}
+                SecondDose = {item.secondDose}
+              />
             );
           })}
         </tbody>

@@ -4,6 +4,7 @@ import {useState,useEffect} from 'react'
 import {useDispatch , useSelector} from 'react-redux'
 import { useHistory } from 'react-router-dom';
 import { getUsers } from '../Redux/features/userSlice';
+import {toast} from 'react-toastify'
 import {
     MDBBtn,
     MDBContainer,
@@ -22,9 +23,11 @@ export default function Login(){
         employeeId: "",
         password: "",
     }
-    const dispatch = useDispatch();
+
+    const history = useHistory();
     const [credentials,setCredentials] = useState(initialState);
     const [loginError,setLoginError] = useState(false);
+   
     const handleInputChange = (e)=>{
         const {name,value} = e.target;
         setCredentials({
@@ -32,16 +35,21 @@ export default function Login(){
             [name]:value
         })
     }
-    const {user} = useSelector((state)=>{return state.user})
+    const {users} = useSelector((state)=>{return state.user})
     const handleSubmit = (e)=>{
         e.preventDefault();
-        dispatch(getUsers(credentials.id));
-        if(user.employeeId === credentials.employeeId && user.password === credentials.password){
+        const currUser = users.find(user => user.employeeId === credentials.employeeId)
+        
+        if(currUser && currUser.employeeId === credentials.employeeId && currUser.password === credentials.password){
             setLoginError(false);
             window.localStorage.setItem('USER_STATE',true);
+            toast.success('Login Successful');
+            setTimeout(()=>history.push('/'), 500);
+            window.location.replace('/');
         }
         else{
             setLoginError(true);
+            toast.error('Invalid Credentials');
         }
     };
     const login = (e)=>{
@@ -57,5 +65,9 @@ export default function Login(){
             <input type="password" id="password" name="password" placeholder="Enter your password"  required onChange = {handleInputChange}/>
             <button type="submit">Log in</button>
         </form>
+        <p>Dont have an account</p>
+            <button onClick = {()=>{
+                setTimeout(()=>history.push('/register'));
+            }}>Signup</button>
     </>
 }
